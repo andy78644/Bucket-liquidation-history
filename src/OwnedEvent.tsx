@@ -1,10 +1,12 @@
 import { useCurrentAccount, useSuiClient } from "@mysten/dapp-kit";
-import { Flex, Heading, Text } from "@radix-ui/themes";
+import { Flex, Heading, Text, Card, Box, Popover } from "@radix-ui/themes";
 import { useEffect, useState } from 'react';
 import {
-    CERT,
+    COINS_TYPE_LIST,
+    COIN_DECIMALS,
     LiquidationEventType
 } from "./constants";
+
 
 export function OwnedEvent() {
   const currentAccount = useCurrentAccount();
@@ -30,7 +32,7 @@ export function OwnedEvent() {
     try {
       for (let i = 0; i < 2; i++) {
         const eventsResult = await client.queryEvents({
-            query: { "MoveEventType" : `${LiquidationEventType}<${CERT}>` },
+            query: { "MoveEventType" : `${LiquidationEventType}<${COINS_TYPE_LIST.vSUI}>` },
             cursor: currentCursor,
             order: 'descending'
         });
@@ -71,17 +73,53 @@ export function OwnedEvent() {
       ) : (
         <Heading size="4">Objects owned by the connected wallet</Heading>
       )}
-      {events.map((event, index) => (
+      <Flex
+        direction="row"
+        wrap="wrap"
+        justify="start"
+        align="start"
+        gap="4"
+      >
+        {events.map((event, index) => (
+            <Card key={event.id?.txDigest}>
+                <Flex
+                direction="column"
+                justify="start"
+                align="start"
+                gap="2"
+                minHeight="220px"
+                >
+                    <Text weight="bold">Event {index + 1}</Text>
+                    <Text>Debtor: {event.parsedJson.debtor}</Text>
+                    <Text>Transaction: {event.id.txDigest}</Text>
+                    <Text>Timestamp: {new Date(Number(event.timestampMs)).toLocaleString()}</Text>
+                    <Flex direction="column" gap="1">
+                        <Text></Text>
+                        <Text weight="bold">Collateral Coin Type: </Text>
+                        <Text>Collateral Amount: {((Number(event.parsedJson.coll_amount) / 10 ** COIN_DECIMALS.BUCK)).toFixed(2)}</Text>
+                        <Text>Price N: {((Number(event.parsedJson.price_n) / 10 ** COIN_DECIMALS.BUCK)).toFixed(2)}</Text>
+                        <Text></Text>
+                        <Text weight="bold">Debt Coin Type: BUCK</Text>
+                        <Text>Debt Amount: {((Number(event.parsedJson.debt_amount) / 10 ** COIN_DECIMALS.BUCK)).toFixed(2)}</Text>
+                        <Text>Price BUCK: {((Number(event.parsedJson.price_m) / 10 ** COIN_DECIMALS.BUCK)).toFixed(2)}</Text>                       
+                        <Text></Text>
+                        <Text>TCR: {event.parsedJson.tcr || 'N/A'}</Text>
+                    </Flex>
+                </Flex>
+            </Card>
+        ))}
+      </Flex>
+      {/* {events.map((event, index) => (
         <Flex direction="column" gap="2" key={index}>
             <Text weight="bold">Event {index + 1}</Text>
             <Text>Transaction: {event.id.txDigest}</Text>
             <Text>Timestamp: {new Date(Number(event.timestampMs)).toLocaleString()}</Text>
             <Text>Event Data: {JSON.stringify(event.parsedJson, null, 2)}</Text>
-            {/* <pre style={{ background: '#f5f5f5', padding: '10px', borderRadius: '4px' }}>
+            <pre style={{ background: '#f5f5f5', padding: '10px', borderRadius: '4px' }}>
                 {JSON.stringify(event.parsedJson, null, 2)}
-            </pre> */}
+            </pre>
         </Flex>
-     ))}
+     ))} */}
     </Flex>
     </>
   );

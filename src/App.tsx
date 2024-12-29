@@ -23,16 +23,28 @@ function App() {
           <ConnectButton />
         </Box>
       </Flex>
-      <Container>
+      {/* <Container>
         <Container
           mt="5"
           pt="2"
           px="4"
           style={{ background: "var(--gray-a2)", minHeight: 500 }}
         >
-          {/* <WalletStatus /> */}
+          <WalletStatus />
           { <OwnedEvent /> }
         </Container>
+      </Container> */}
+      <Container px="3" p="6">
+        <Flex width="100%" gapX="4">
+          <Flex
+            flexGrow="1"
+            p="4"
+            style={{ backgroundColor: "#252E3E", borderRadius: "10px" }}
+          >
+            <OwnedEvent />
+          </Flex>
+          
+        </Flex>
       </Container>
     </>
   );
