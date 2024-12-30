@@ -1,9 +1,13 @@
+import { useState } from 'react';
 import { ConnectButton } from "@mysten/dapp-kit";
 import { Box, Container, Flex, Heading } from "@radix-ui/themes";
-import { WalletStatus } from "./WalletStatus";
-import { OwnedEvent } from "./OwnedEvent";
+import { CoinSelector } from "./components/CoinSelector";
+import { OwnedEvent } from "./components/OwnedEvent";
+import { COINS_TYPE_LIST } from './constants';
+
 
 function App() {
+  const [selectedCoin, setSelectedCoin] = useState<keyof typeof COINS_TYPE_LIST>('vSUI');
   return (
     <>
       <Flex
@@ -23,25 +27,18 @@ function App() {
           <ConnectButton />
         </Box>
       </Flex>
-      {/* <Container>
-        <Container
-          mt="5"
-          pt="2"
-          px="4"
-          style={{ background: "var(--gray-a2)", minHeight: 500 }}
-        >
-          <WalletStatus />
-          { <OwnedEvent /> }
-        </Container>
-      </Container> */}
       <Container px="3" p="6">
-        <Flex width="100%" gapX="4">
+        <Flex direction="column" width="100%" gapX="4">
+          <CoinSelector 
+            selectedCoin={selectedCoin} 
+            onSelectCoin={setSelectedCoin}
+          />
           <Flex
             flexGrow="1"
             p="4"
             style={{ backgroundColor: "#252E3E", borderRadius: "10px" }}
           >
-            <OwnedEvent />
+            <OwnedEvent selectedCoin={selectedCoin} />
           </Flex>
           
         </Flex>

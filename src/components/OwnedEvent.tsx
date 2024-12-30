@@ -5,10 +5,24 @@ import {
     COINS_TYPE_LIST,
     COIN_DECIMALS,
     LiquidationEventType
-} from "./constants";
+} from "../constants";
 
 
-export function OwnedEvent() {
+// Add interface at top of file
+interface LiquidationEvent {
+    coll_amount: string;
+    debt_amount: string;
+    debtor: string;
+    price_m: string;
+    price_n: string;
+    tcr: string | null;
+  }
+
+interface OwnedEventProps {
+  selectedCoin: keyof typeof COINS_TYPE_LIST;
+}
+
+export function OwnedEvent( { selectedCoin }: OwnedEventProps ) {
   const currentAccount = useCurrentAccount();
   const client = useSuiClient();
   const [events, setEvents] = useState<any[]>([]);
@@ -17,28 +31,29 @@ export function OwnedEvent() {
     if (currentAccount?.address) {
       LiduidationQuery();
     }
-  }, [currentAccount]);
+  }, [currentAccount, selectedCoin]);
   const LiduidationQuery = async () => {
+    setEvents([]);
     if (!currentAccount?.address) {
       console.error("No connected account found.");
       return;
     }
     
-    // const address = currentAccount.address; 
-    const address = "0xfcdb97f918c8785f805a1a11c07428a13bee1ab37584a2f43a05cb57cba0f0cd";
+    const address = currentAccount.address; 
+    // const address = "0xfcdb97f918c8785f805a1a11c07428a13bee1ab37584a2f43a05cb57cba0f0cd";
 
     let allEvents = [];
     let currentCursor: undefined | {eventSeq: string, txDigest: string} = undefined ;
     try {
-      for (let i = 0; i < 2; i++) {
+      for (let i = 0; i < 10; i++) {
         const eventsResult = await client.queryEvents({
-            query: { "MoveEventType" : `${LiquidationEventType}<${COINS_TYPE_LIST.vSUI}>` },
+            query: { "MoveEventType" : `${LiquidationEventType}<${COINS_TYPE_LIST[selectedCoin]}>` },
             cursor: currentCursor,
             order: 'descending'
         });
         console.log("Events result:", eventsResult);
         const filteredEvents = eventsResult.data.filter(event => 
-            event.parsedJson?.debtor === address
+            (event.parsedJson as LiquidationEvent)?.debtor === address
           );
           allEvents.push(...filteredEvents);
         if (eventsResult.hasNextPage) {
@@ -58,6 +73,7 @@ export function OwnedEvent() {
         // const firstEvent = eventsResult.data[0]?.parsedJson as { msg?: string };
         // const result = firstEvent?.msg || "No events found for the given criteria.";
       } else {
+        //setEvents([]);
         console.log("No events found for the given criteriaa.");
       }
     } catch (error) {
@@ -67,11 +83,11 @@ export function OwnedEvent() {
 
   return (
     <>
-      <Flex direction="column" my="2">
+      <Flex direction="column" my="2" gap="4">
       {events.length === 0 ? (
-        <Text>No objects owned by the connected wallet</Text>
+        <Text>No Liquidation record</Text>
       ) : (
-        <Heading size="4">Objects owned by the connected wallet</Heading>
+        <Heading size="4">Liquidation Records</Heading>
       )}
       <Flex
         direction="row"
@@ -89,15 +105,15 @@ export function OwnedEvent() {
                 gap="2"
                 minHeight="220px"
                 >
-                    <Text weight="bold">Event {index + 1}</Text>
-                    <Text>Debtor: {event.parsedJson.debtor}</Text>
+                    <Text weight="bold">Liquidation {index + 1}</Text>
+                    {/* <Text>Debtor: {event.parsedJson.debtor}</Text> */}
                     <Text>Transaction: {event.id.txDigest}</Text>
                     <Text>Timestamp: {new Date(Number(event.timestampMs)).toLocaleString()}</Text>
                     <Flex direction="column" gap="1">
                         <Text></Text>
-                        <Text weight="bold">Collateral Coin Type: </Text>
-                        <Text>Collateral Amount: {((Number(event.parsedJson.coll_amount) / 10 ** COIN_DECIMALS.BUCK)).toFixed(2)}</Text>
-                        <Text>Price N: {((Number(event.parsedJson.price_n) / 10 ** COIN_DECIMALS.BUCK)).toFixed(2)}</Text>
+                        <Text weight="bold">Collateral Coin Type: {selectedCoin}</Text>
+                        <Text>Collateral Amount: {((Number(event.parsedJson.coll_amount) / 10 ** COIN_DECIMALS[selectedCoin])).toFixed(2)}</Text>
+                        <Text>Price : {((Number(event.parsedJson.price_n) / 10 ** COIN_DECIMALS[selectedCoin])).toFixed(2)}</Text>
                         <Text></Text>
                         <Text weight="bold">Debt Coin Type: BUCK</Text>
                         <Text>Debt Amount: {((Number(event.parsedJson.debt_amount) / 10 ** COIN_DECIMALS.BUCK)).toFixed(2)}</Text>
@@ -109,17 +125,6 @@ export function OwnedEvent() {
             </Card>
         ))}
       </Flex>
-      {/* {events.map((event, index) => (
-        <Flex direction="column" gap="2" key={index}>
-            <Text weight="bold">Event {index + 1}</Text>
-            <Text>Transaction: {event.id.txDigest}</Text>
-            <Text>Timestamp: {new Date(Number(event.timestampMs)).toLocaleString()}</Text>
-            <Text>Event Data: {JSON.stringify(event.parsedJson, null, 2)}</Text>
-            <pre style={{ background: '#f5f5f5', padding: '10px', borderRadius: '4px' }}>
-                {JSON.stringify(event.parsedJson, null, 2)}
-            </pre>
-        </Flex>
-     ))} */}
     </Flex>
     </>
   );
