@@ -1,5 +1,5 @@
 import { useCurrentAccount, useSuiClient } from "@mysten/dapp-kit";
-import { Flex, Heading, Text, Card, Box, Popover } from "@radix-ui/themes";
+import { Flex, Heading, Text, Card } from "@radix-ui/themes";
 import { useEffect, useState } from 'react';
 import {
     COINS_TYPE_LIST,

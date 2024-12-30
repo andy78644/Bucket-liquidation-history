@@ -18,7 +18,7 @@ export function CoinSelector({ selectedCoin, onSelectCoin }: CoinSelectorProps) 
             justifyContent: "center"
         }}
     >
-      {Object.entries(COINS_TYPE_LIST).map(([key, value]) => (
+      {Object.entries(COINS_TYPE_LIST).map(([key, _]) => (
         <Button 
           key={key}
           onClick={() => onSelectCoin(key as keyof typeof COINS_TYPE_LIST)}
