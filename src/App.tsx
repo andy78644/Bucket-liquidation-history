@@ -20,7 +20,7 @@ function App() {
         }}
       >
         <Box>
-          <Heading>dApp Starter Template</Heading>
+          <Heading>Bucket Liquidation Record</Heading>
         </Box>
 
         <Box>

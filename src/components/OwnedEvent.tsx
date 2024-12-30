@@ -51,7 +51,7 @@ export function OwnedEvent( { selectedCoin }: OwnedEventProps ) {
             cursor: currentCursor,
             order: 'descending'
         });
-        console.log("Events result:", eventsResult);
+        // console.log("Events result:", eventsResult);
         const filteredEvents = eventsResult.data.filter(event => 
             (event.parsedJson as LiquidationEvent)?.debtor === address
           );
@@ -68,7 +68,7 @@ export function OwnedEvent( { selectedCoin }: OwnedEventProps ) {
       }
       
       if (allEvents.length > 0) {
-        console.log("Events found:", allEvents);
+        // console.log("Events found:", allEvents);
         setEvents(allEvents);
         // const firstEvent = eventsResult.data[0]?.parsedJson as { msg?: string };
         // const result = firstEvent?.msg || "No events found for the given criteria.";
