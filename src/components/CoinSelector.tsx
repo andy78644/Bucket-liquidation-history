@@ -10,7 +10,14 @@ interface CoinSelectorProps {
 
 export function CoinSelector({ selectedCoin, onSelectCoin }: CoinSelectorProps) {
   return (
-    <Flex gap="2">
+    <Flex 
+        gap="2" 
+        wrap="wrap" 
+        style={{ 
+            maxWidth: "100%",
+            justifyContent: "center"
+        }}
+    >
       {Object.entries(COINS_TYPE_LIST).map(([key, value]) => (
         <Button 
           key={key}

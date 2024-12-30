@@ -28,7 +28,7 @@ function App() {
         </Box>
       </Flex>
       <Container px="3" p="6">
-        <Flex direction="column" width="100%" gapX="4">
+        <Flex direction="column" width="100%" gap="5" >
           <CoinSelector 
             selectedCoin={selectedCoin} 
             onSelectCoin={setSelectedCoin}

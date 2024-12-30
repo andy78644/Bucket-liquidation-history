@@ -45,7 +45,7 @@ export function OwnedEvent( { selectedCoin }: OwnedEventProps ) {
     let allEvents = [];
     let currentCursor: undefined | {eventSeq: string, txDigest: string} = undefined ;
     try {
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 20; i++) {
         const eventsResult = await client.queryEvents({
             query: { "MoveEventType" : `${LiquidationEventType}<${COINS_TYPE_LIST[selectedCoin]}>` },
             cursor: currentCursor,
